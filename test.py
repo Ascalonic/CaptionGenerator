@@ -118,6 +118,21 @@ class RNN_Decoder(tf.keras.Model):
   def reset_state(self, batch_size):
     return tf.zeros((batch_size, self.units))
 
+
+top_k = 5000
+
+tokenizer = tf.keras.preprocessing.text.Tokenizer(num_words=top_k,
+                                                  oov_token="<unk>",
+                                                  filters='!"#$%&()*+.,-/:;=?@[\]^_`{|}~ ')
+tokenizer.fit_on_texts(train_captions)
+train_seqs = tokenizer.texts_to_sequences(train_captions)
+
+tokenizer.word_index['<pad>'] = 0
+tokenizer.index_word[0] = '<pad>'
+
+# Create the tokenized vectors
+train_seqs = tokenizer.texts_to_sequences(train_captions)
+
 ## Image feature extractor
 image_model = tf.keras.applications.InceptionV3(include_top=False,
                                                 weights='imagenet')
@@ -126,7 +141,6 @@ hidden_layer = image_model.layers[-1].output
 
 image_features_extract_model = tf.keras.Model(new_input, hidden_layer)
 
-top_k = 5000
 BATCH_SIZE = 64
 BUFFER_SIZE = 1000
 embedding_dim = 256
