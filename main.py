@@ -357,3 +357,5 @@ def evaluate(image):
 
     attention_plot = attention_plot[:len(result), :]
     return result, attention_plot
+
+
