@@ -127,9 +127,6 @@ tokenizer = tf.keras.preprocessing.text.Tokenizer(num_words=top_k,
 tokenizer.word_index['<pad>'] = 0
 tokenizer.index_word[0] = '<pad>'
 
-# Create the tokenized vectors
-train_seqs = tokenizer.texts_to_sequences(train_captions)
-
 ## Image feature extractor
 image_model = tf.keras.applications.InceptionV3(include_top=False,
                                                 weights='imagenet')
