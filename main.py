@@ -2,11 +2,10 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 import tensorflow as tf
 
-# You'll generate plots of attention in order to see which parts of an image
-# our model focuses on during captioning
+# To geenrate plots of attention in order to see which parts of an image
+# the model focuses on during captioning
 import matplotlib.pyplot as plt
 
-# Scikit-learn includes many helpful utilities
 from sklearn.model_selection import train_test_split
 from sklearn.utils import shuffle
 
@@ -147,7 +146,7 @@ class RNN_Decoder(tf.keras.Model):
   def reset_state(self, batch_size):
     return tf.zeros((batch_size, self.units))
 
-# Download caption annotation files
+# Download caption annotation files - MS-COCO
 annotation_folder = '/annotations/'
 if not os.path.exists(os.path.abspath('.') + annotation_folder):
   annotation_zip = tf.keras.utils.get_file('captions.zip',
@@ -358,4 +357,13 @@ def evaluate(image):
     attention_plot = attention_plot[:len(result), :]
     return result, attention_plot
 
+image_url = 'https://cdn.kqed.org/wp-content/uploads/sites/10/2020/01/marketstreet200122a.jpg'
+image_extension = image_url[-4:]
+image_path = tf.keras.utils.get_file('image'+image_extension,
+                                     origin=image_url)
 
+result, attention_plot = evaluate(image_path)
+print ('Prediction Caption:', ' '.join(result))
+plot_attention(image_path, result, attention_plot)
+# opening the image
+Image.open(image_path)
