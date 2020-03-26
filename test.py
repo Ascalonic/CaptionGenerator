@@ -126,6 +126,7 @@ hidden_layer = image_model.layers[-1].output
 
 image_features_extract_model = tf.keras.Model(new_input, hidden_layer)
 
+top_k = 5000
 BATCH_SIZE = 64
 BUFFER_SIZE = 1000
 embedding_dim = 256
