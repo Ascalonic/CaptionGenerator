@@ -160,8 +160,6 @@ if ckpt_manager.latest_checkpoint:
 
 
 def evaluate(image):
-    attention_plot = np.zeros((max_length, attention_features_shape))
-
     hidden = decoder.reset_state(batch_size=1)
 
     temp_input = tf.expand_dims(load_image(image)[0], 0)
@@ -176,25 +174,22 @@ def evaluate(image):
     for i in range(max_length):
         predictions, hidden, attention_weights = decoder(dec_input, features, hidden)
 
-        attention_plot[i] = tf.reshape(attention_weights, (-1, )).numpy()
-
         predicted_id = tf.random.categorical(predictions, 1)[0][0].numpy()
         result.append(tokenizer.index_word[predicted_id])
 
         if tokenizer.index_word[predicted_id] == '<end>':
-            return result, attention_plot
+            return result
 
         dec_input = tf.expand_dims([predicted_id], 0)
 
-    attention_plot = attention_plot[:len(result), :]
-    return result, attention_plot
+    return result
 
 image_url = 'https://cdn.kqed.org/wp-content/uploads/sites/10/2020/01/marketstreet200122a.jpg'
 image_extension = image_url[-4:]
 image_path = tf.keras.utils.get_file('image'+image_extension,
                                      origin=image_url)
 
-result, attention_plot = evaluate(image_path)
+result = evaluate(image_path)
 print ('Prediction Caption:', ' '.join(result))
 plot_attention(image_path, result, attention_plot)
 # opening the image
